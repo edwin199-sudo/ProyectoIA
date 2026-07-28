@@ -16,9 +16,6 @@ services:
 
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
-
-    networks:
-      - proyectoia-network
       
   n8n:
     image: docker.n8n.io/n8nio/n8n:latest
@@ -44,17 +41,11 @@ services:
       TZ: ${TZ}
       GENERIC_TIMEZONE: ${GENERIC_TIMEZONE}
 
-      N8N_RESTRICT_FILE_ACCESS_TO: /data
-
     volumes:
       - ./data/n8n:/home/node/.n8n
-      - ./data:/data
 
     depends_on:
       - postgres
-    networks:
-      - proyectoia-network  
-
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
     container_name: proyectoia-open-webui
@@ -71,9 +62,6 @@ services:
 
     depends_on:
       - ollama
-    networks:
-      - proyectoia-network
-
   qdrant:
     image: qdrant/qdrant:latest
     container_name: proyectoia-qdrant
@@ -84,8 +72,6 @@ services:
 
     volumes:
       - ./data/qdrant:/qdrant/storage
-    networks:
-      - proyectoia-network
 
   ollama:
     image: ollama/ollama:latest
@@ -97,29 +83,5 @@ services:
 
     volumes:
       - ./data/ollama:/root/.ollama
-    networks:
-      - proyectoia-network
 
     tty: true
-  pdf-extractor:
-    build:
-      context: ./services/pdf-extractor
-
-    container_name: proyectoia-pdf-extractor
-
-    restart: unless-stopped
-
-    ports:
-      - "8000:8000"
-      
-    volumes:
-      - ./data:/data    
-
-    networks:
-      - proyectoia-network
-    depends_on:
-      - ollama  
-
-networks:
-  proyectoia-network:
-    driver: bridge
