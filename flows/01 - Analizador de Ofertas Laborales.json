@@ -1,0 +1,123 @@
+{
+  "name": "01 - Analizador de Ofertas Laborales",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        16
+      ],
+      "id": "40649a86-fd1a-4571-b7ea-a387537c377f",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Eres un reclutador senior especializado en perfiles de desarrollo de software.\n\nAnaliza la siguiente oferta laboral:\n\n{{ $json.job_offer }}\n\nDevuelve el resultado en este formato:\n\n# Resumen\n\n# Tecnologías\n\n# Soft Skills\n\n# Experiencia\n\n# Educación\n\n# Inglés\n\n# Palabras clave ATS\n\n# Compatibilidad con mi perfil\n\n# Recomendaciones para adaptar el CV",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        48,
+        16
+      ],
+      "id": "758cf8e1-72b7-4acb-84ae-c64ed8123eff",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:7b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        224
+      ],
+      "id": "f4a5e8fc-4f4a-40cf-a134-f3ae51237b89",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "SAooa58EUelbkfXg",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0ecc913a-097a-411e-9df2-3af6141cad21",
+              "name": "job_offer",
+              "value": "Buscamos a la persona que Diseñe, contruya y evolucione el software 3PL de Almacenamiento grado alimenticio. Lo que mas nos importa: Modelado de datos, dominio de SQL, Python Comodo trabajando con Agentes de IA.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -160,
+        16
+      ],
+      "id": "6a4f9b0a-ee36-4785-92e5-48f9474adf5e",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e4ab6507-f6e0-40b3-9eb0-c05ac81d3c15",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f350d83c36afa6f95abe5cc85440c02197ca8bb6fbcb0394f23b55f480bad9ee"
+  },
+  "nodeGroups": [],
+  "id": "fnageZUFjUNb0reR",
+  "tags": []
+}
