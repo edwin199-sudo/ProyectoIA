@@ -1,10 +1,19 @@
 from fastapi import FastAPI
 
-from app.schemas import HealthResponse
+from app.chunker import split_text
+from app.embeddings import generate_embedding
+
+from app.schemas import (
+    ChunkRequest,
+    ChunkResponse,
+    EmbedRequest,
+    EmbedResponse,
+    HealthResponse,
+)
 
 app = FastAPI(
     title="ProyectoIA RAG Service",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 
@@ -12,5 +21,34 @@ app = FastAPI(
 def health():
     return HealthResponse(
         success=True,
-        message="RAG Service funcionando correctamente"
+        message="RAG Service funcionando correctamente",
+    )
+
+
+@app.post("/chunk", response_model=ChunkResponse)
+def chunk(request: ChunkRequest):
+
+    chunks = split_text(
+        request.text,
+        chunk_size=request.chunk_size,
+        chunk_overlap=request.chunk_overlap,
+    )
+
+    return ChunkResponse(
+        success=True,
+        total_chunks=len(chunks),
+        chunks=chunks,
+    )
+
+@app.post("/embed", response_model=EmbedResponse)
+def embed(request: EmbedRequest):
+
+    vectors = [
+        generate_embedding(text)
+        for text in request.texts
+    ]
+
+    return EmbedResponse(
+        success=True,
+        embeddings=vectors,
     )
