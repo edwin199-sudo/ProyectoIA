@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from app.chunker import split_text
 from app.embeddings import generate_embedding
+from app.qdrant_service import create_collection
 
 from app.schemas import (
     ChunkRequest,
@@ -9,6 +10,8 @@ from app.schemas import (
     EmbedRequest,
     EmbedResponse,
     HealthResponse,
+    IndexRequest,
+    IndexResponse,
 )
 
 app = FastAPI(
@@ -52,3 +55,21 @@ def embed(request: EmbedRequest):
         success=True,
         embeddings=vectors,
     )
+
+@app.post("/index", response_model=IndexResponse)
+def index(request: IndexRequest):
+
+    vectors = [
+        generate_embedding(text)
+        for text in request.texts
+    ]
+
+    create_collection(
+        vector_size=len(vectors[0])
+    )
+
+    return IndexResponse(
+        success=True,
+        indexed_chunks=len(vectors),
+    )
+

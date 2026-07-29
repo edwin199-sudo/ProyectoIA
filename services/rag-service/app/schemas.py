@@ -24,3 +24,12 @@ class EmbedRequest(BaseModel):
 class EmbedResponse(BaseModel):
     success: bool
     embeddings: list[list[float]]
+
+class IndexRequest(BaseModel):
+    texts: list[str]
+
+
+class IndexResponse(BaseModel):
+    success: bool
+    indexed_chunks: int
+
