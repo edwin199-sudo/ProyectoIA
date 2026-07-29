@@ -111,15 +111,38 @@ services:
 
     ports:
       - "8000:8000"
-      
+
     volumes:
-      - ./data:/data    
+      - ./services/pdf-extractor/app:/app/app
+      - ./data:/data
 
     networks:
       - proyectoia-network
-    depends_on:
-      - ollama  
 
+    depends_on:
+      - ollama
+
+  rag-service:
+    build:
+      context: ./services/rag-service
+
+    container_name: proyectoia-rag-service
+
+    restart: unless-stopped
+
+    ports:
+      - "8001:8000"
+
+    volumes:
+      - ./services/rag-service/app:/app/app
+
+    depends_on:
+      - ollama
+      - qdrant
+
+    networks:
+      - proyectoia-network
+      
 networks:
   proyectoia-network:
     driver: bridge
