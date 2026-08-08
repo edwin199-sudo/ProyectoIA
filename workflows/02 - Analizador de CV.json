@@ -1,0 +1,145 @@
+{
+  "name": "02 - Analizador de CV",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        16
+      ],
+      "id": "684db437-f4f1-497f-8df7-0c25ea8ee2d9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Eres un reclutador sénior especializado en selección de desarrolladores de software Full Stack, Backend, IA e Ingeniería de Software.\n\nAnaliza el siguiente currículum vitae:\n\n{{ $json.text }}\n\nGenera un informe profesional utilizando el siguiente formato:\n\n# Resumen Profesional\n\nResume el perfil del candidato en máximo 5 líneas.\n\n# Tecnologías\n\nLista todos los lenguajes, frameworks, herramientas y tecnologías encontradas.\n\n# Bases de Datos\n\n# Cloud\n\n# DevOps\n\n# Inteligencia Artificial\n\n# Soft Skills\n\n# Experiencia Profesional\n\nResume cada experiencia importante.\n\n# Educación\n\n# Certificaciones\n\n# Fortalezas\n\n# Debilidades\n\n# Compatibilidad ATS (0-100)\n\nExplica por qué obtuvo esa puntuación.\n\n# Palabras clave ATS faltantes\n\nEnumera las palabras clave que debería agregar para mejorar su CV.\n\n# Recomendaciones\n\nPropón mejoras concretas para aumentar la probabilidad de ser seleccionado por empresas tecnológicas.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        192,
+        16
+      ],
+      "id": "897d7139-ffcd-4fcb-9280-e5be3134b1a0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:7b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        144,
+        256
+      ],
+      "id": "2c5a2e02-8fda-471c-81d1-8d8b0f02a449",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "SAooa58EUelbkfXg",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -48,
+        16
+      ],
+      "id": "d050aa43-c5bb-474b-bdcb-4067a48e2b1d",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/CV.pdf.pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -272,
+        16
+      ],
+      "id": "b7021dee-88b5-4b9e-9570-41a4867dc293",
+      "name": "Read/Write Files from Disk"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "17d62435-91aa-448e-af8e-c67e0e269310",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f350d83c36afa6f95abe5cc85440c02197ca8bb6fbcb0394f23b55f480bad9ee"
+  },
+  "nodeGroups": [],
+  "id": "dxBHhL0lku36FMP7",
+  "tags": []
+}

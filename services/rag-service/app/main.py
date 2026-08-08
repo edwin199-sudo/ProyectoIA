@@ -1,75 +1,18 @@
+from app.api.chunk import router as chunk_router
+from app.api.embed import router as embed_router
+from app.api.health import router as health_router
+from app.api.index import router as index_router
+from app.api.search import router as search_router
+from app.core.config import settings
 from fastapi import FastAPI
 
-from app.chunker import split_text
-from app.embeddings import generate_embedding
-from app.qdrant_service import create_collection
-
-from app.schemas import (
-    ChunkRequest,
-    ChunkResponse,
-    EmbedRequest,
-    EmbedResponse,
-    HealthResponse,
-    IndexRequest,
-    IndexResponse,
-)
-
 app = FastAPI(
-    title="ProyectoIA RAG Service",
-    version="1.0.0",
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION,
 )
 
-
-@app.get("/", response_model=HealthResponse)
-def health():
-    return HealthResponse(
-        success=True,
-        message="RAG Service funcionando correctamente",
-    )
-
-
-@app.post("/chunk", response_model=ChunkResponse)
-def chunk(request: ChunkRequest):
-
-    chunks = split_text(
-        request.text,
-        chunk_size=request.chunk_size,
-        chunk_overlap=request.chunk_overlap,
-    )
-
-    return ChunkResponse(
-        success=True,
-        total_chunks=len(chunks),
-        chunks=chunks,
-    )
-
-@app.post("/embed", response_model=EmbedResponse)
-def embed(request: EmbedRequest):
-
-    vectors = [
-        generate_embedding(text)
-        for text in request.texts
-    ]
-
-    return EmbedResponse(
-        success=True,
-        embeddings=vectors,
-    )
-
-@app.post("/index", response_model=IndexResponse)
-def index(request: IndexRequest):
-
-    vectors = [
-        generate_embedding(text)
-        for text in request.texts
-    ]
-
-    create_collection(
-        vector_size=len(vectors[0])
-    )
-
-    return IndexResponse(
-        success=True,
-        indexed_chunks=len(vectors),
-    )
-
+app.include_router(health_router)
+app.include_router(chunk_router)
+app.include_router(embed_router)
+app.include_router(index_router)
+app.include_router(search_router)

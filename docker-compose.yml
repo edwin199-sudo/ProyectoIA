@@ -19,7 +19,7 @@ services:
 
     networks:
       - proyectoia-network
-      
+
   n8n:
     image: docker.n8n.io/n8nio/n8n:latest
     container_name: proyectoia-n8n
@@ -53,7 +53,7 @@ services:
     depends_on:
       - postgres
     networks:
-      - proyectoia-network  
+      - proyectoia-network
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
@@ -142,7 +142,7 @@ services:
 
     networks:
       - proyectoia-network
-      
+
 networks:
   proyectoia-network:
     driver: bridge

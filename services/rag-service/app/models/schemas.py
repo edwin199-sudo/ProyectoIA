@@ -17,6 +17,7 @@ class ChunkResponse(BaseModel):
     total_chunks: int
     chunks: list[str]
 
+
 class EmbedRequest(BaseModel):
     texts: list[str]
 
@@ -24,6 +25,7 @@ class EmbedRequest(BaseModel):
 class EmbedResponse(BaseModel):
     success: bool
     embeddings: list[list[float]]
+
 
 class IndexRequest(BaseModel):
     texts: list[str]
@@ -33,3 +35,19 @@ class IndexResponse(BaseModel):
     success: bool
     indexed_chunks: int
 
+
+class SearchRequest(BaseModel):
+    query: str
+    top_k: int = 5
+
+
+class SearchResult(BaseModel):
+    score: float
+    text: str
+    source: str
+    chunk_index: int
+
+
+class SearchResponse(BaseModel):
+    success: bool
+    results: list[SearchResult]

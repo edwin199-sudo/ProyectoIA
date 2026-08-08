@@ -1,19 +1,77 @@
-# Variables de entorno
+# ==========================
+# Environment variables
+# ==========================
 .env
+.env.*
 
-# Datos persistentes
+# ==========================
+# Python
+# ==========================
+# Bytecode
+__pycache__/
+*.py[cod]
+
+# Ruff
+.ruff_cache/
+
+# Pytest
+.pytest_cache/
+
+# Coverage
+.coverage
+coverage.xml
+htmlcov/
+
+# Python version
+.python-version
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# ==========================
+# Persistent data
+# ==========================
 data/
 
+# ==========================
 # VS Code
+# ==========================
 .vscode/
 
+# ==========================
 # macOS
+# ==========================
 .DS_Store
 
+# ==========================
 # Logs
+# ==========================
 *.log
 logs/
 
-# Archivos temporales
+# ==========================
+# Temporary files
+# ==========================
 *.tmp
 *.temp
+# Backups
+*.bak
+
+# Temporary text files
+estructura.txt
+
+# ==========================
+# Docker
+# ==========================
+*.pid
+
+# ==========================
+# Coverage
+# ==========================
+htmlcov/
+.coverage

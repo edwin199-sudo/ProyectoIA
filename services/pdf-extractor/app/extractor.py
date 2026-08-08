@@ -16,8 +16,4 @@ def extract_text_from_pdf(pdf_bytes: bytes):
 
     document.close()
 
-    return {
-        "pages": pages,
-        "characters": characters,
-        "text": text
-    }
+    return {"pages": pages, "characters": characters, "text": text}

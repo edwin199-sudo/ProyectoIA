@@ -1,0 +1,187 @@
+{
+  "name": "04 - Chat RAG",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1104,
+        16
+      ],
+      "id": "7f2553a3-d5b4-49a5-a215-2046d4ca9e4b",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://rag-service:8000/search",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{$json.query}}"
+            },
+            {
+              "name": "top_k",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -704,
+        16
+      ],
+      "id": "f4bcb847-e39a-49e8-97c4-590a5785a61a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f3a8d158-a074-4d4d-af61-c187b48f6513",
+              "name": "query",
+              "value": "¿Qué experiencia tiene Edwin en Python?",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -912,
+        16
+      ],
+      "id": "a460d2be-6f9c-45d4-83c9-4cff39866d87",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener la pregunta original\nconst query = $item(0).$node[\"Edit Fields\"].json.query;\n\n// Obtener los resultados del endpoint /search\nconst results = $json.results || [];\n\n// Construir el contexto\nconst context = results\n  .map((item, index) => {\n    return `Fragmento ${index + 1}:\\n${item.text}`;\n  })\n  .join(\"\\n\\n----------------------\\n\\n\");\n\n// Devolver un objeto limpio para el AI Agent\nreturn {\n  query,\n  context,\n  results\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -496,
+        16
+      ],
+      "id": "13be8b09-a789-43e8-98ed-3f4c4abfe654",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Eres un asistente RAG especializado en responder preguntas usando únicamente el contexto proporcionado.\n\n# CONTEXTO\n\n{{ $json.context }}\n\n# PREGUNTA\n\n{{ $json.query }}\n\n# INSTRUCCIONES\n\n1. Responde únicamente con información que aparezca en el CONTEXTO.\n2. No inventes datos ni hagas suposiciones.\n3. Si la información no está en el contexto, responde:\n   \"No encontré esa información en los documentos indexados.\"\n4. Resume la información de forma clara y profesional.\n5. No menciones que eres una IA ni que recibiste un contexto.\n6. Responde siempre en español.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -288,
+        16
+      ],
+      "id": "50d1fe5b-14fb-40a0-9968-901de89a6a4f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:7b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        208
+      ],
+      "id": "b0f2a7da-87b9-40f4-89a7-7f047f99b259",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "SAooa58EUelbkfXg",
+          "name": "Ollama account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "52ecb559-2180-4b3d-8559-577d41ab9eb9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f350d83c36afa6f95abe5cc85440c02197ca8bb6fbcb0394f23b55f480bad9ee"
+  },
+  "nodeGroups": [],
+  "id": "6G2gSLWNdBshXotI",
+  "tags": []
+}
